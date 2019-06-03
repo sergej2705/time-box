@@ -1,26 +1,63 @@
+import { Speech } from 'expo';
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Timer } from 'react-native-flip-timer';
+import { StyleSheet, View } from 'react-native';
+import CountDown from 'react-native-countdown-component';
 
 export default class App extends Component {
+  speechOptions = {
+    language: "de_DE",
+    rate: 1,
+  }
+  speechOptionsSlow = Object.assign({}, this.speechOptions, {
+    rate: 0.1,
+  })
+
   state = {
     play: true,
+    time: 17,
   }
 
-  play = () => {
-    this.setState(({ play }) => ({ play: !play }));
+  componentDidMount() {
+    Speech.stop();
+  }
+
+  tellTime = (time) => {
+    // gets wrong time as input... subtract 1
+    time = time - 1;
+
+    timesToTell = [1, 2, 3, 4, 5, 10, 15, 30, 45];
+
+    minutes = time / 60;
+    hours = minutes / 60;
+
+    if (timesToTell.includes(time)) {
+      Speech.speak(time + "", this.speechOptions);
+    } else if (timesToTell.includes(minutes)) {
+      console.log("minutes");
+      Speech.speak(minutes + " Minute" + ((minutes == 1) ? "" : "n"), this.speechOptions);
+    } else if (timesToTell.includes(hours)) {
+      Speech.speak(hours + " Stunde" + ((hours == 1) ? "" : "n"), this.speechOptions);
+    }
   }
 
   render() {
-    const { play } = this.state;
+    var { play, time } = this.state;
+
     return (
       <View style={styles.container}>
-        <Timer time={0} play={play} />
-        <TouchableOpacity style={styles.button} onPress={this.play}>
-          <Text style={styles.text}>{play ? 'Pause' : 'Play'}</Text>
-        </TouchableOpacity>
+        <CountDown
+          // digitTxtStyle={styles.text}
+          until={time}
+          running={play}
+          onFinish={() => Speech.speak("bip, bip, bip", this.speechOptionsSlow)}
+          onPress={() => this.state.play = !this.state.play}
+          onChange={this.tellTime}
+          size={30}
+          showSeparator={false}
+          timeToShow={['H', 'M', 'S']}
+        />
       </View>
-    );
+    )
   }
 }
 
@@ -30,17 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  button: {
-    height: 40,
-    backgroundColor: '#333333',
-    width: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#cccccc',
   },
 });
