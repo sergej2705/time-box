@@ -1,4 +1,4 @@
-import { Speech } from 'expo';
+import { ScreenOrientation, Speech } from 'expo';
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import CountDown from 'react-native-countdown-component';
@@ -21,17 +21,17 @@ export default class App extends Component {
     Speech.stop();
   }
 
-  tellTime = (time) => {
-    // gets wrong time as input... subtract 1
-    time = time - 1;
+  tellTime = (seconds) => {
+    // gets wrong seconds as input... subtract 1
+    seconds = seconds - 1;
 
     timesToTell = [1, 2, 3, 4, 5, 10, 15, 30, 45];
 
-    minutes = time / 60;
+    minutes = seconds / 60;
     hours = minutes / 60;
 
-    if (timesToTell.includes(time)) {
-      Speech.speak(time + "", this.speechOptions);
+    if (timesToTell.includes(seconds)) {
+      Speech.speak(seconds + "", this.speechOptions);
     } else if (timesToTell.includes(minutes)) {
       console.log("minutes");
       Speech.speak(minutes + " Minute" + ((minutes == 1) ? "" : "n"), this.speechOptions);
@@ -46,13 +46,12 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <CountDown
-          // digitTxtStyle={styles.text}
           until={time}
           running={play}
-          onFinish={() => Speech.speak("bip, bip, bip", this.speechOptionsSlow)}
+          onFinish={() => Speech.speak("biep, biep, biep", this.speechOptionsSlow)}
           onPress={() => this.state.play = !this.state.play}
           onChange={this.tellTime}
-          size={30}
+          size={40}
           showSeparator={false}
           timeToShow={['H', 'M', 'S']}
         />
