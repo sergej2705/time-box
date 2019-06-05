@@ -19,6 +19,7 @@ export default class App extends Component {
 
   componentDidMount() {
     Speech.stop();
+    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL_BUT_UPSIDE_DOWN);
   }
 
   tellTime = (seconds) => {
